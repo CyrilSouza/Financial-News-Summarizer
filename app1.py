@@ -12,7 +12,7 @@ tokenizer = PegasusTokenizer.from_pretrained(model_name)
 model = PegasusForConditionalGeneration.from_pretrained(model_name)
 
 # 3. Setup Pipeline
-monitored_tickers = ['ETH','BTC','stocks','jiofinance','tatapower',]
+monitored_tickers = ['ETH','stocks','jiofinance','tatapower']
 
 # 4.1. Search for Stock News using Google and Yahoo Finance
 print('Searching for stock news for', monitored_tickers)
