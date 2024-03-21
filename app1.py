@@ -12,14 +12,13 @@ tokenizer = PegasusTokenizer.from_pretrained(model_name)
 model = PegasusForConditionalGeneration.from_pretrained(model_name)
 
 # 3. Setup Pipeline
-monitored_tickers = ['ETH','stocks','jiofinance','tatapower']
+monitored_tickers = ['ETH','JIOFIN','NVDA']
 
 # 4.1. Search for Stock News using Google and Yahoo Finance
 print('Searching for stock news for', monitored_tickers)
 def search_for_stock_news_links(ticker):
     search_url = 'https://www.google.com/search?q=yahoo+finance+{}&tbm=nws'.format(ticker)
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
-    r = requests.get(search_url, headers=headers)
+    r = requests.get(search_url)
     soup = BeautifulSoup(r.text, 'html.parser')
     atags = soup.find_all('a')
     hrefs = [link['href'] for link in atags]
@@ -45,8 +44,7 @@ print('Scraping news links.')
 def scrape_and_process(URLs):
     ARTICLES = []
     for url in URLs:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
-        r = requests.get(url,headers)
+        r = requests.get(url)
         soup = BeautifulSoup(r.text, 'html.parser')
         results = soup.find_all('p')
         text = [res.text for res in results]
@@ -92,6 +90,6 @@ def create_output_array(summaries, scores, urls):
 final_output = create_output_array(summaries, scores, cleaned_urls)
 final_output.insert(0, ['Ticker','Summary', 'Sentiment', 'Sentiment Score', 'URL'])
 
-with open('ethsummaries.csv', mode='w', newline='') as f:
+with open('financesummaries.csv', mode='w', newline='') as f:
     csv_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     csv_writer.writerows(final_output)
